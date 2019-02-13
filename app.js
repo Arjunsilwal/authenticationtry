@@ -28,7 +28,7 @@ app.get("/", (req, res) =>{
   res.render("home");
 });
 
-app.get("/secret", (req, res) =>{
+app.get("/secret", isLoggedIn, (req, res) =>{
   res.render("secret");
 });
 //auth
@@ -52,13 +52,25 @@ app.post("/register",(req, res) =>{
 app.get("/login", (req, res) =>{
   res.render("login");
 });
-
+//Handling user login
 app.post("/login", passport.authenticate("local", {
   successRedirect: "/secret",
   failureRedirect: "/login"
 }) ,(req, res) =>{
-
 });
+
+//LogoutHere
+app.get("/logout", (req, res)=>{
+  req.logout();
+  res.redirect("/");
+});
+
+function isLoggedIn(req, res, next){
+  if(req.isAuthenticated()){
+    return next();
+  }
+  res.redirect("/login");
+}
 //Port HERE
 var port = process.env.PORT || 3000;
 app.listen(port, () =>{
