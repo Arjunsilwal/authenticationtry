@@ -18,6 +18,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(bodyParser.urlencoded({extended: true}));
 
+passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
@@ -43,11 +44,21 @@ app.post("/register",(req, res) =>{
       return res.render("register");
     }
     passport.authenticate("local")(req, res, () =>{
-      res.redirect("secret");
+      res.redirect("/secret");
     })
   });
 });
+//Login
+app.get("/login", (req, res) =>{
+  res.render("login");
+});
 
+app.post("/login", passport.authenticate("local", {
+  successRedirect: "/secret",
+  failureRedirect: "/login"
+}) ,(req, res) =>{
+
+});
 //Port HERE
 var port = process.env.PORT || 3000;
 app.listen(port, () =>{
